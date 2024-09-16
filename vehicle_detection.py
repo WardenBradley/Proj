@@ -5,6 +5,8 @@ import cv2 as cv
 import numpy as np
 from flask import Flask, render_template, request
 import time
+import pandas as pd
+from openpyxl import load_workbook
 
 #%%
 app = Flask(__name__)
@@ -35,8 +37,10 @@ def upload():
         video_path = os.path.join(app.config['UPLOAD_FOLDER'], video.filename)
         video.save(video_path)
         # After saving, process the video using OpenCV
-        process_video(video_path)
-        return "Video processed successfully"
+        vehicles = process_video(video_path)
+
+        update_excel('vehicle_count_log.xlsx', video.filename, vehicles)
+        return f"Video processed successfully. Vehicles counted: {vehicles}"
     return "invalid file type"
 
 # %%
@@ -47,11 +51,6 @@ def process_video(video_path):
     line_height = 550  
     matches = []
     vehicles = 0
-    
-    
-    
-
-
 
 # %%
     def get_centrolid(x, y, w, h):
@@ -127,7 +126,7 @@ def process_video(video_path):
             current_time = time.time()
             if current_time - start_time < text_duration:
                 red = cv.cvtColor(frame1, cv.COLOR_BGR2GRAY)
-                cv2.putText(frame1, "Vehicle Overload Alert!", (410, 390), cv2.FONT_HERSHEY_SIMPLEX, 2,
+                cv2.putText(frame1, "Warning! Too Much Vehicles!", (410, 390), cv2.FONT_HERSHEY_SIMPLEX, 2,
                         (0, 0, 255), 4)
             else:
                 alert_displayed = False
@@ -142,6 +141,27 @@ def process_video(video_path):
  
     cv2.destroyAllWindows()
     cap.release()
+
+    return vehicles
+
+# %% Update Excel file
+def update_excel(file_name, video_name, vehicle_count):
+    if os.path.exists(file_name):
+        # Load the existing Excel file
+        df_existing = pd.read_excel(file_name, engine='openpyxl')
+    else:
+        # Create a new DataFrame if the file does not exist
+        df_existing = pd.DataFrame(columns=["Video Name", "Vehicle Count"])
+    
+    # Create a new DataFrame with the new entry
+    new_entry = pd.DataFrame([[video_name, vehicle_count]], columns=["Video Name", "Vehicle Count"])
+    
+    # Append the new entry to the existing DataFrame
+    df_updated = pd.concat([df_existing, new_entry], ignore_index=True)
+    
+    # Write the updated DataFrame to the Excel file
+    with pd.ExcelWriter(file_name, engine='openpyxl') as writer:
+        df_updated.to_excel(writer, index=False, sheet_name='Sheet1')
 
 if __name__ == "__main__":
     app.run(debug=True)
