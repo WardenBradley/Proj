@@ -4,6 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Video</title>
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #00c6ff, #0072ff); /* Gradient background */
+        }
+
+        /* Styling for the form */
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        /* File input styling */
+        input[type="file"] {
+            display: block;
+            margin-bottom: 20px;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Button styling */
+        input[type="submit"] {
+            background-color: #28a745; /* Green background */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); /* Button shadow */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        /* File input focus effect */
+        input[type="file"]:focus {
+            border-color: #007bff;
+        }
+
+        /* Hover effect for button */
+        input[type="submit"]:hover {
+            background-color: #218838;
+            box-shadow: 0 8px 20px rgba(33, 136, 56, 0.4); /* More intense shadow on hover */
+        }
+
+        /* Active effect for button */
+        input[type="submit"]:active {
+            background-color: #1e7e34;
+            transform: scale(0.98); /* Slightly shrink button on click */
+        }
+    </style>
 </head>
 <body>
     <form action="{{url_for('upload')}}" method="post" enctype="multipart/form-data">
